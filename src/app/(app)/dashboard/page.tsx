@@ -16,7 +16,7 @@ import { User } from "next-auth";
 import { Spotlight } from "@/components/ui/spotlight-new";
 import MessageCard from "@/components/MessageCard";
 
-function page() {
+function Page() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
@@ -214,4 +214,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     let body;
     try {
       body = await request.json();
-    } catch (error) {
+    } catch  {
       return Response.json(
         {
           success: false,
@@ -85,8 +85,7 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-  } catch (error) {
-    console.log(error);
+  } catch {
     return Response.json(
       {
         success: false,

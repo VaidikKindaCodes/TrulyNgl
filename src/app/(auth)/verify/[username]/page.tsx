@@ -22,7 +22,7 @@ import { BackgroundBeams } from "@/components/ui/background-beams";
 
 type VerifyInput = z.infer<typeof verifySchema>;
 
-function page() {
+function Page() {
   const router = useRouter();
   const params = useParams<{ username: string }>();
 
@@ -92,4 +92,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
