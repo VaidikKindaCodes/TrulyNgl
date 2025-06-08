@@ -6,15 +6,13 @@ import { NextResponse, NextRequest } from "next/server";
 
 
 export async function DELETE(
-  req: NextRequest,  
-  context: { params: { id: string } }  
+  req: NextRequest
 ) {
-  const { params } = context;
   await DbConnect();
-  const ihatethisgame = await req.json();
-  const session = await getServerSession(authOptions); // ✅ no req needed
-  if(ihatethisgame){
-  }
+  // Optionally parse body if needed
+  // const ihatethisgame = await req.json();
+
+  const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
     return NextResponse.json(
@@ -24,11 +22,20 @@ export async function DELETE(
   }
 
   const userId = (session.user as any)._id || (session.user as any).id;
-  const messageId = params.id;
+
+  const url = req.nextUrl;
+  const messageId = url.pathname.split("/").pop();
 
   if (!userId) {
     return NextResponse.json(
       { success: false, message: "User ID missing from session" },
+      { status: 400 }
+    );
+  }
+
+  if (!messageId) {
+    return NextResponse.json(
+      { success: false, message: "Message ID missing from URL" },
       { status: 400 }
     );
   }
