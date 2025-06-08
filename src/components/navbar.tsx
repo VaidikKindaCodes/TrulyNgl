@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export function NavbarComp() {
   const {data: session} = useSession();
-  const user: User = session?.user as User;
+  const user: User = session?.user as unknown as User;
   const handleSignOut = ()=>{
     signOut();
   }

@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Message } from "@/model/User";
@@ -109,7 +108,7 @@ function page() {
 
   useEffect(() => {
     if (session?.user) {
-      const { username } = session.user as User;
+      const { username } = session.user as unknown as User;
       const baseUrl = `${window.location.protocol}//${window.location.host}`;
       setProfileUrl(`${baseUrl}/u/${username}`);
     }

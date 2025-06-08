@@ -90,7 +90,6 @@ function SignUpPage() {
   setTimeout(async () => {
     let session = await getSession();
 
-    // Retry once if username is missing (optional)
     if (!session?.user?.username) {
       session = await getSession();
     }

@@ -12,13 +12,11 @@ export async function POST(req: Request) {
 
   const { username } = await req.json();
 
-  // Check if username is already taken
   const existingUser = await userModel.findOne({ username });
   if (existingUser) {
     return NextResponse.json({ success: false, message: "Username already taken" }, { status: 400 });
   }
 
-  // Update user in DB
   await userModel.findOneAndUpdate(
     { email: session.user.email },
     { username },

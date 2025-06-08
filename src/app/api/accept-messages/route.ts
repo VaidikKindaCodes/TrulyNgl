@@ -10,7 +10,7 @@ type requestBody = {
 export async function POST(request: Request) {
   await DbConnect();
   const session = await getServerSession(authOptions);
-  const user: User = session?.user as User;
+  const user: User = session?.user as unknown as User;
   if (!session || !session.user) {
     return Response.json(
       {
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
     await DbConnect();
     const session  = await getServerSession(authOptions);
-    const user : User= session?.user as User;
+    const user : User= session?.user as unknown as User;
     if(!session || !session.user){
         return Response.json({
             success : false,

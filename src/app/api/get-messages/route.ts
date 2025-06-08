@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 export async function GET(request: Request) {
   await DbConnect();
   const session = await getServerSession(authOptions);
-  const user: User = session?.user as User;
+  const user: User = session?.user as unknown as User;
 
   if (!session || !session.user) {
     return Response.json(
@@ -20,10 +20,10 @@ export async function GET(request: Request) {
   }
 
   try {
-    const userId = new mongoose.Types.ObjectId(user._id); // ✅ fix here
+    const userId = new mongoose.Types.ObjectId(user._id); 
 
     const userResult = await userModel.aggregate([
-      { $match: { _id: userId } }, // ✅ now it will work as expected
+      { $match: { _id: userId } }, 
       { $unwind: "$messages" },
       { $sort: { "messages.createdAt": -1 } },
       {

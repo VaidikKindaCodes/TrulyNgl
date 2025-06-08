@@ -17,7 +17,7 @@ export async function DELETE(
     );
   }
 
-  const user = session.user as User;
+  const user = session.user as unknown as User;
   const messageId = await params.id;
 
   if (!user._id) {
