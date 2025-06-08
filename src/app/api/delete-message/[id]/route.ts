@@ -1,17 +1,18 @@
 import DbConnect from "@/lib/dbConnect";
-import { getServerSession } from "next-auth/next"; // ✅ this fixes the type error
-
-import { authOptions } from "../../auth/[...nextauth]/options";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import userModel from "@/model/User";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 export async function DELETE(
-  context: { params: { id: string } }
+  req: NextRequest,  
+  { params }: { params: { id: string } }  
 ) {
   await DbConnect();
-
-  const session = await getServerSession(authOptions);
-
+  const ihatethisgame = await req.json();
+  const session = await getServerSession(authOptions); // ✅ no req needed
+  if(ihatethisgame){
+  }
 
   if (!session || !session.user) {
     return NextResponse.json(
@@ -20,16 +21,15 @@ export async function DELETE(
     );
   }
 
-  const { _id, id } = session.user as { _id?: string; id?: string };
-  const userId = _id || id;
+  const userId = (session.user as any)._id || (session.user as any).id;
+  const messageId = params.id;
+
   if (!userId) {
     return NextResponse.json(
       { success: false, message: "User ID missing from session" },
       { status: 400 }
     );
   }
-
-  const messageId = context.params.id;
 
   try {
     const result = await userModel.updateOne(
