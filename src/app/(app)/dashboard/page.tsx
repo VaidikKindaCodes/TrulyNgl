@@ -165,6 +165,7 @@ function Page() {
         <div className="mb-6 flex items-center">
           <Switch
             {...register("isAccepting")}
+            disabled={isSwitchLoading}
             checked={isAccepting}
             onCheckedChange={handleSwitchChange}
             className="mr-2"
@@ -175,6 +176,9 @@ function Page() {
               {isAccepting ? "On" : "Off"}
             </span>
           </span>
+          {isSwitchLoading && (
+            <Loader2 className="h-4 w-4 animate-spin ml-2" />
+          )}
         </div>
 
         <Separator className="border-gray-700" />
