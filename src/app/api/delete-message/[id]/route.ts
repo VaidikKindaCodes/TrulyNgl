@@ -4,7 +4,9 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import userModel from "@/model/User";
 import { NextResponse, NextRequest } from "next/server";
 
+
 export async function DELETE(
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   req: NextRequest,  
   { params }: { params: { id: string } }  
 ) {
@@ -52,4 +54,5 @@ export async function DELETE(
       { status: 500 }
     );
   }
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 }
