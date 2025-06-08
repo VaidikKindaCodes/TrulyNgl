@@ -7,8 +7,9 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function DELETE(
   req: NextRequest,  
-  { params }: { params: { id: string } }  
+  context: { params: { id: string } }  
 ) {
+  const { params } = context;
   await DbConnect();
   const ihatethisgame = await req.json();
   const session = await getServerSession(authOptions); // ✅ no req needed
