@@ -169,7 +169,8 @@ function SignInPage() {
 
   const onSubmit = async (data: z.infer<typeof signinSchema>) => {
     const result = await signIn("credentials", {
-      // Refresh the router to get updated session data
+      redirect: false,
+      identifier: data.identifier,
       password: data.password,
     });
 
@@ -179,7 +180,7 @@ function SignInPage() {
     }
 
     // Refresh the router to get updated session data
-    await router.refresh();
+    router.refresh();
 
     const sessionRes = await getSession();
     const username = sessionRes?.user?.username;

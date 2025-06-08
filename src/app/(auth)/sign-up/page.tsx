@@ -59,7 +59,7 @@ function SignUpPage() {
       } finally {
         setIsCheckingUsername(false);
       }
-    }, 300);
+    }, 900);
 
     return () => clearTimeout(handler);
   }, [watchedUsername]);
