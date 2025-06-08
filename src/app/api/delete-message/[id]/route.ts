@@ -20,7 +20,8 @@ export async function DELETE(
     );
   }
 
-  const userId = (session.user as any)._id || (session.user as any).id;
+  const { _id, id } = session.user as { _id?: string; id?: string };
+  const userId = _id || id;
   if (!userId) {
     return NextResponse.json(
       { success: false, message: "User ID missing from session" },
