@@ -6,6 +6,7 @@ import { z } from "zod";
 const usernameQuerySchema = z.object({
   username: usernameValidationSchema,
 });
+
 export async function GET(request: Request) {
   await DbConnect();
   try {
@@ -16,45 +17,36 @@ export async function GET(request: Request) {
     const result = usernameQuerySchema.safeParse(queryParam);
 
     if (!result.success) {
+      const usernameErrors = result.error.format().username?._errors || [];
       return Response.json(
         {
           success: false,
-          message: "error getting username",
+          message:
+            usernameErrors?.length > 0
+              ? usernameErrors.join(', ')
+              : 'Invalid query parameters',
         },
         { status: 400 }
       );
     }
     const { username } = result.data;
 
-    const exisitingUser = await userModel.findOne({
-      username,
-    });
-    if (exisitingUser) {
-      return Response.json(
-        {
+    const existingUser = await userModel.findOne({ username });
+    if (existingUser) {
+      return new Response(JSON.stringify({
           success: false,
           message: "username is already taken",
-        },
-        { status: 400 }
-      );
+        }), { status: 400 });
     }
-    return Response.json(
-      {
+    return new Response(JSON.stringify({
         success: true,
-        message: "username is unique",
-      },
-      { status: 200 }
-    );
+        message: "username is available",
+      }), { status: 200 });
   } catch (error) {
     console.log("error", error);
-    return Response.json(
-      {
+    return new Response(JSON.stringify({
         success: false,
         message: "error checking for username",
-      },
-      {
-        status: 500,
-      }
-    );
+      }), { status: 500 });
   }
 }

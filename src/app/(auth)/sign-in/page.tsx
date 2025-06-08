@@ -73,6 +73,7 @@ function Page() {
                   </FormItem>
                 )}
               />
+              <Link href="/forgot-password">forgot password? Reset it</Link>
               <Button type="submit" className="w-full">
                 Sign In
               </Button>

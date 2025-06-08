@@ -1,5 +1,12 @@
 "use client";
-import { Form, FormField, FormItem, FormLabel, FormMessage, FormControl } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormControl,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { signupSchema } from "@/schemas/signupSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,21 +15,18 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { Loader2 } from "lucide-react";
-import { useDebounceCallback } from "usehooks-ts";
 import { useRouter } from "next/navigation";
 import { ApiResponse } from "@/types/ApiResponse";
 import { toast } from "sonner";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 
 function Page() {
-  const [username, setUsername] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const debounce = useDebounceCallback(setUsername, 300);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signupSchema>>({
@@ -34,23 +38,33 @@ function Page() {
     },
   });
 
+  const watchedUsername = form.watch("username");
+
   useEffect(() => {
-    const checkUsernameUnique = async () => {
-      if (username) {
-        setIsCheckingUsername(true);
-        setUsernameMessage("");
-        try {
-          const result = await axios.get(`/api/check-username-unique?username=${username}`);
-          setUsernameMessage(result.data.message);
-        } catch (error) {
-          setUsernameMessage("Error checking username.");
-        } finally {
-          setIsCheckingUsername(false);
-        }
+    const handler = setTimeout(async () => {
+      if (!watchedUsername) return;
+
+      setIsCheckingUsername(true);
+      setUsernameMessage("");
+
+      try {
+        const result = await axios.get(
+          `/api/check-username-unique?username=${watchedUsername}`
+        );
+        setUsernameMessage(result.data.message);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+        setUsernameMessage(error.response.data.message || "Error checking username.");
+      } else {
+        setUsernameMessage("Error checking username.");
       }
-    };
-    checkUsernameUnique();
-  }, [username]);
+      } finally {
+        setIsCheckingUsername(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [watchedUsername]);
 
   const onSubmit = async (data: z.infer<typeof signupSchema>) => {
     setIsSubmitting(true);
@@ -88,14 +102,7 @@ function Page() {
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          debounce(e.target.value);
-                        }}
-                        type="text"
-                      />
+                      <Input {...field} type="text" />
                     </FormControl>
                     {isCheckingUsername && (
                       <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
@@ -103,8 +110,14 @@ function Page() {
                         Checking availability...
                       </div>
                     )}
-                    {usernameMessage && (
-                      <p className="text-sm text-red-500 mt-1">
+                    {usernameMessage && !isCheckingUsername &&(
+                      <p
+                        className={`text-sm mt-1 ${
+                          usernameMessage.toLowerCase().includes("available")
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}
+                      >
                         {usernameMessage}
                       </p>
                     )}
