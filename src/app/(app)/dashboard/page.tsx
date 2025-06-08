@@ -11,15 +11,6 @@ import { useSession } from "next-auth/react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios, { AxiosError } from "axios";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { toast } from "sonner";
 import { ApiResponse } from "@/types/ApiResponse";
 import { User } from "next-auth";

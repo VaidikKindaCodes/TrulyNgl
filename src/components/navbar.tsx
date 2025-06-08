@@ -24,7 +24,7 @@ export function NavbarComp() {
         className="w-28 rounded-lg bg-gray-400 px-6 py-2 font-medium text-black transition-all duration-300 hover:bg-gray-200"
         onClick={()=>handleSignOut()}
       >
-        Sign-out
+        Sign Out
       </Link>
       </>
 

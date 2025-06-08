@@ -15,7 +15,8 @@ declare module "next-auth" {
             _id ?: string,
             isVerified?: boolean,
             isAcceptingMessages?: boolean,
-            username?: string
+            username?: string | null
+            provider:string
         } & DefaultSession['user']
     }
 }
@@ -26,5 +27,6 @@ declare module "next-auth/JWT" {
         isVerified?: boolean,
         isAcceptingMessages?:boolean,
         username?:string,
+        provider?: string;
     }
 }
