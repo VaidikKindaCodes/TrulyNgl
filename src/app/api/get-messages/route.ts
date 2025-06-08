@@ -2,6 +2,7 @@ import DbConnect from "@/lib/dbConnect";
 import { getServerSession, User } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import userModel from "@/model/User";
+import mongoose from "mongoose";
 
 export async function GET(request: Request) {
   await DbConnect();
@@ -19,9 +20,10 @@ export async function GET(request: Request) {
   }
 
   try {
-    const userId = user._id;
+    const userId = new mongoose.Types.ObjectId(user._id); // ✅ fix here
+
     const userResult = await userModel.aggregate([
-      { $match: { _id: userId } },
+      { $match: { _id: userId } }, // ✅ now it will work as expected
       { $unwind: "$messages" },
       { $sort: { "messages.createdAt": -1 } },
       {
@@ -31,11 +33,21 @@ export async function GET(request: Request) {
         },
       },
     ]);
+
     if (!userResult) {
       return Response.json(
         {
           success: false,
           message: "no user found",
+        },
+        { status: 404 }
+      );
+    }
+    if (userResult.length == 0) {
+      return Response.json(
+        {
+          success: false,
+          message: "no messages",
         },
         { status: 404 }
       );

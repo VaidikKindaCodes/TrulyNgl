@@ -1,5 +1,5 @@
 "use client";
-import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormMessage, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { signupSchema } from "@/schemas/signupSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,12 +14,13 @@ import { useDebounceCallback } from "usehooks-ts";
 import { useRouter } from "next/navigation";
 import { ApiResponse } from "@/types/ApiResponse";
 import { toast } from "sonner";
+import { BackgroundBeams } from "@/components/ui/background-beams";
 
-function page() {
+function Page() {
   const [username, setUsername] = useState("");
-  const [usernmaeMessage, setUsernameMessage] = useState("");
+  const [usernameMessage, setUsernameMessage] = useState("");
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
-  const [isSubmiting, setIsSubmiting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const debounce = useDebounceCallback(setUsername, 300);
   const router = useRouter();
@@ -33,97 +34,134 @@ function page() {
     },
   });
 
-  useEffect(()=>{
-    const checkUsernameUnique = async()=>{
-        if(username){
-            setIsCheckingUsername(true);
-            setUsernameMessage("");
-            try {
-                const result = await axios.get(`/api/check-username-unique/${username}`);
-                setUsernameMessage(result.data.message);
-            } catch (error) {
-                setUsernameMessage("error checking for username");
-            } finally {
-                setIsCheckingUsername(false);
-            }
+  useEffect(() => {
+    const checkUsernameUnique = async () => {
+      if (username) {
+        setIsCheckingUsername(true);
+        setUsernameMessage("");
+        try {
+          const result = await axios.get(`/api/check-username-unique?username=${username}`);
+          setUsernameMessage(result.data.message);
+        } catch (error) {
+          setUsernameMessage("Error checking username.");
+        } finally {
+          setIsCheckingUsername(false);
         }
-    }
+      }
+    };
     checkUsernameUnique();
-  } , [username]);
+  }, [username]);
 
   const onSubmit = async (data: z.infer<typeof signupSchema>) => {
-    setIsSubmiting(true);
+    setIsSubmitting(true);
     try {
       const response = await axios.post<ApiResponse>("/api/sign-up", data);
       toast.success(response.data.message);
-      router.replace(`/verify/${username}`);
-      setIsSubmiting(false);
+      router.replace(`/verify/${data.username}`);
     } catch (error) {
-      console.log("error while submiting");
-      const axiosError = error as AxiosError;
+      console.error("Error during signup:", error);
+      toast.error("Signup failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmiting(false);
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-800">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-            Welcome to Truely NGL
-          </h1>
-          <p className="mb-4">
-            Create an account to start recieving your messages
-          </p>
-        </div>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              name="username"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <Input {...field} type="text" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="email"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <Input {...field} type="email" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>password</FormLabel>
-                  <Input {...field} type="password" />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="w-full">
-              Sign Up
-            </Button>
-          </form>
-        </Form>
-        <div className="text-center mt-4">
-          <p>
-            already a member?{" "}
-            <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
-              Sign in
-            </Link>
-          </p>
+    <div className="relative min-h-screen bg-gray-950">
+      <BackgroundBeams />
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="z-10 w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+          <div className="text-center">
+            <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+              Welcome to Truely NGL
+            </h1>
+            <p className="mb-4">
+              Create an account to start receiving your messages
+            </p>
+          </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                name="username"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          debounce(e.target.value);
+                        }}
+                        type="text"
+                      />
+                    </FormControl>
+                    {isCheckingUsername && (
+                      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
+                        <Loader2 className="animate-spin w-4 h-4" />
+                        Checking availability...
+                      </div>
+                    )}
+                    {usernameMessage && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {usernameMessage}
+                      </p>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="email"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="email" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="password"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="password" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="animate-spin h-4 w-4" />
+                    Signing up...
+                  </span>
+                ) : (
+                  "Sign Up"
+                )}
+              </Button>
+            </form>
+          </Form>
+          <div className="text-center mt-4">
+            <p>
+              Already a member?{" "}
+              <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
+                Sign in
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-export default page;
+export default Page;

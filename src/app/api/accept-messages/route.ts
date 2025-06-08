@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     const updatedUser = await userModel.findOneAndUpdate(
       { _id: userId },
       { isAcceptingMessages: isAcceptingMessages },
-      { new: true }// gives updated document
+      { new: true }
     ); 
     if (!updatedUser) {
       console.log("cannot update user");

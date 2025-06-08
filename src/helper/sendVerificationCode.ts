@@ -2,7 +2,7 @@ import { ApiResponse } from "@/types/ApiResponse";
 import VerificationEmail from "@/components/email-template"
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_KEY);
 
 export async function sendVerificationEmail(
     email : string,

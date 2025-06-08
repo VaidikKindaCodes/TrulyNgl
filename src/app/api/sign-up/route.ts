@@ -3,7 +3,7 @@ import DbConnect from "@/lib/dbConnect";
 import userModel from "@/model/User";
 import bcrypt from "bcryptjs";
 
-async function POST(request: Request) {
+export async function POST(request: Request) {
   await DbConnect();
   try {
     let body;
@@ -18,11 +18,10 @@ async function POST(request: Request) {
         { status: 400 }
       );
     }
+
     const { username, email, password } = body;
 
-    const exisitingUserByUsername = await userModel.findOne({
-      username: username,
-    });
+    const exisitingUserByUsername = await userModel.findOne({ username });
     if (exisitingUserByUsername) {
       return Response.json(
         {
@@ -32,7 +31,8 @@ async function POST(request: Request) {
         { status: 400 }
       );
     }
-    const exisitingUserByEmail = await userModel.findOne({ email: email });
+
+    const exisitingUserByEmail = await userModel.findOne({ email });
     const verifyCode = Math.floor(Math.random() * 90000 + 100000).toString();
     const verifyCodeExpiryDate = new Date();
     verifyCodeExpiryDate.setHours(verifyCodeExpiryDate.getHours() + 1);
@@ -66,6 +66,7 @@ async function POST(request: Request) {
         messages: [],
       });
     }
+
     const sendCode = await sendVerificationEmail(email, username, verifyCode);
     if (sendCode.success) {
       return Response.json(
@@ -78,7 +79,7 @@ async function POST(request: Request) {
     } else {
       return Response.json(
         {
-          success: true,
+          success: false,
           message: "error sending verification code",
         },
         { status: 500 }
@@ -87,13 +88,11 @@ async function POST(request: Request) {
   } catch (error) {
     console.log(error);
     return Response.json(
-        {
-          success: false,
-          message: "error registring user",
-        },
-        { status: 500 }
-      );
+      {
+        success: false,
+        message: "error registering user",
+      },
+      { status: 500 }
+    );
   }
 }
-
-export default POST;
