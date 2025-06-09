@@ -75,16 +75,18 @@ function Page() {
   }, [session, fetchAcceptMessages]);
 
   const handleDeleteMessages = async (messageId: string) => {
-    setMessages((prev) => prev.filter((message) => message._id !== messageId));
     try {
       const response = await axios.delete(`/api/delete-message/${messageId}`);
-      if (response) {
+      if (response.data.success) {
+        setMessages((prev) => prev.filter((message) => message._id !== messageId));
         toast.success("Message deleted successfully");
+      } else {
+        toast.error(response.data.message || "Error while deleting message");
       }
     } catch (error) {
       const errorAxios = error as AxiosError;
       toast.error(
-        (errorAxios.response?.data as string) || "Error while deleting message"
+        (errorAxios.response?.data as any)?.message || "Error while deleting message"
       );
     }
   };
