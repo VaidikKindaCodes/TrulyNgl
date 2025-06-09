@@ -123,8 +123,10 @@ function Page() {
 
   if (!session)
     return (
-      <div className="p-4 bg-gray-900 text-gray-100 min-h-screen">
-        Please login to see your dashboard
+      <div className="p-4 bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          Please login to see your dashboard
+        </div>
       </div>
     );
 
@@ -141,21 +143,22 @@ function Page() {
         duration={7}
         xOffset={100}
       />
-      <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-gray-800 rounded shadow-lg w-full max-w-6xl">
-        <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
+      <div className="my-4 mx-2 md:mx-8 lg:mx-auto p-4 md:p-6 bg-gray-800 rounded shadow-lg w-full max-w-6xl">
+        <h1 className="text-2xl md:text-4xl font-bold mb-4 text-center md:text-left">User Dashboard</h1>
 
         {profileUrl && (
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Copy Your Unique Link</h2>
-            <div className="flex items-center">
+            <h2 className="text-lg md:text-xl font-semibold mb-2">Copy Your Unique Link</h2>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <input
                 type="text"
                 value={profileUrl}
                 disabled
-                className="input input-bordered w-full p-3 mr-2 bg-gray-700 border-gray-600 text-gray-200 rounded"
+                className="input input-bordered w-full p-3 bg-gray-700 border-gray-600 text-gray-200 rounded"
+                style={{ minWidth: 0 }}
               />
               <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto"
                 onClick={copyToClipBoard}
               >
                 Copy
@@ -164,28 +167,28 @@ function Page() {
           </div>
         )}
 
-        <div className="mb-6 flex items-center">
+        <div className="mb-6 flex flex-col sm:flex-row items-center gap-2">
           <Switch
             {...register("isAccepting")}
             disabled={isSwitchLoading}
             checked={isAccepting}
             onCheckedChange={handleSwitchChange}
-            className="mr-2"
+            className="mr-0 sm:mr-2"
           />
-          <span className="text-lg">
+          <span className="text-base md:text-lg">
             Accept Messages:{" "}
             <span className={isAccepting ? "text-green-400" : "text-red-400"}>
               {isAccepting ? "On" : "Off"}
             </span>
           </span>
           {isSwitchLoading && (
-            <Loader2 className="h-4 w-4 animate-spin ml-2" />
+            <Loader2 className="h-4 w-4 animate-spin ml-0 sm:ml-2" />
           )}
         </div>
 
         <Separator className="border-gray-700" />
 
-        <div className="mt-4">
+        <div className="mt-4 flex justify-end">
           <Button
             variant="outline"
             onClick={(e) => {
@@ -202,7 +205,7 @@ function Page() {
           </Button>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
           {messages.length > 0 ? (
             messages.map((message, index) => (
               <MessageCard
@@ -212,7 +215,7 @@ function Page() {
               />
             ))
           ) : (
-            <p className="text-center col-span-3">No messages to display.</p>
+            <p className="text-center col-span-1 sm:col-span-2 md:col-span-3">No messages to display.</p>
           )}
         </div>
       </div>
