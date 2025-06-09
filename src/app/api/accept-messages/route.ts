@@ -1,3 +1,4 @@
+import { NextRequest, NextResponse } from "next/server";
 import DbConnect from "@/lib/dbConnect";
 import userModel from "@/model/User";
 import { authOptions } from "../auth/[...nextauth]/options";
@@ -6,13 +7,12 @@ import { getServerSession, User } from "next-auth";
 type requestBody = {
   isAcceptingMessages: boolean;
 };
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   await DbConnect();
   const session = await getServerSession(authOptions);
   const user: User & { _id?: string } = session?.user as unknown as User & { _id?: string };
   if (!session || !session.user || !user._id) {
-    return Response.json(
+    return NextResponse.json(
       {
         success: false,
         message: "no user in session or missing user id",
@@ -31,8 +31,7 @@ export async function POST(request: Request) {
       { new: true }
     ); 
     if (!updatedUser) {
-      console.log("cannot update user");
-      return Response.json(
+      return NextResponse.json(
         {
           success: false,
           message: "user not found or could not be updated",
@@ -42,7 +41,7 @@ export async function POST(request: Request) {
         }
       );
     }
-    return Response.json(
+    return NextResponse.json(
       {
         success: true,
         message: "user updated",
@@ -53,7 +52,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.log("error :", error);
-    return Response.json(
+    return NextResponse.json(
       {
         success: false,
         message: "failed to update user status",
@@ -65,12 +64,12 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     await DbConnect();
     const session  = await getServerSession(authOptions);
     const user : User & { _id?: string } = session?.user as unknown as User & { _id?: string };
     if(!session || !session.user || !user._id){
-        return Response.json({
+        return NextResponse.json({
             success : false,
             message : "no user in session or missing user id"
         },
@@ -83,7 +82,7 @@ export async function GET() {
         const foundUser = await userModel.findById(userId);
         if(!foundUser){
         console.log("cannot find the user");
-        return Response.json({
+        return NextResponse.json({
             success : false,
             message : "user not found"
         },
@@ -91,7 +90,7 @@ export async function GET() {
             status : 404,
         })
         }
-        return Response.json({
+        return NextResponse.json({
         success : true,
         isAcceptingMessages : foundUser.isAcceptingMessages
         },
@@ -100,7 +99,7 @@ export async function GET() {
         })
     } catch (error) {
         console.log("error : " , error);
-        return Response.json({
+        return NextResponse.json({
             success : false,
             message : "error while getting user status for accepting message"
         },

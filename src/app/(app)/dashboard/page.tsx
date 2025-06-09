@@ -36,11 +36,11 @@ function Page() {
     setIsSwitchLoading(true);
     try {
       const response = await axios.get(`/api/accept-messages`);
-      setValue("isAccepting", response?.data.isAcceptingMessages);
+      setValue("isAccepting", response?.data.isAcceptingMessages ?? false);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast.error(
-        axiosError.response?.data.message || "error switching states"
+        axiosError.response?.data?.message || "Error fetching accepting state"
       );
     } finally {
       setIsSwitchLoading(false);
@@ -97,11 +97,11 @@ function Page() {
         isAcceptingMessages: !isAccepting,
       });
       setValue("isAccepting", !isAccepting);
-      toast.success(response.data.message);
+      toast.success(response.data.message || "User updated");
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast.error(
-        axiosError.response?.data.message || "Error switching states"
+        axiosError.response?.data?.message || "Error switching states"
       );
     }
   };
