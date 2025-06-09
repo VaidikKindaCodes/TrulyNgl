@@ -5,7 +5,7 @@ import messages from "@/messages.json";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-function page() {
+function Page() {
   return (
     <>
       <BackgroundBeamsWithCollision className="bg-black min-h-fit">
@@ -25,12 +25,13 @@ function page() {
             send message annonymously to anyone
           </h3>
           <div className="flex justify-center mt-5">
-            <Button
-              asChild
-              className="mt-8 sm:mt-12 bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500 px-6 sm:px-8 py-3 sm:py-4 text-lg sm:text-2xl font-semibold text-white rounded-lg shadow-lg transition transform hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-            >
-              <Link href="/sign-up">Get started</Link>
-            </Button>
+            <Link href="/sign-up" passHref>
+              <Button
+                className="mt-8 sm:mt-12 bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500 px-6 sm:px-8 py-3 sm:py-4 text-lg sm:text-2xl font-semibold text-white rounded-lg shadow-lg transition transform hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+              >
+                Get started
+              </Button>
+            </Link>
           </div>
         </div>
       </BackgroundBeamsWithCollision>
@@ -45,4 +46,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
