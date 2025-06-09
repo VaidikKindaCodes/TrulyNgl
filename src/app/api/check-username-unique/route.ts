@@ -1,6 +1,8 @@
 import DbConnect from "@/lib/dbConnect";
 import userModel from "@/model/User";
 import { usernameValidationSchema } from "@/schemas/signupSchema";
+import { ApiResponse } from "@/types/ApiResponse";
+import { AxiosError } from "axios";
 import { z } from "zod";
 
 const usernameQuerySchema = z.object({
@@ -44,9 +46,10 @@ export async function GET(request: Request) {
       }), { status: 200 });
   } catch (error) {
     console.log("error", error);
+    const errorAxios = error as AxiosError<ApiResponse>;
     return new Response(JSON.stringify({
         success: false,
-        message: "error checking for username",
+        message: errorAxios.response?.data.message
       }), { status: 500 });
   }
 }

@@ -10,12 +10,12 @@ type requestBody = {
 export async function POST(request: Request) {
   await DbConnect();
   const session = await getServerSession(authOptions);
-  const user: User = session?.user as unknown as User;
-  if (!session || !session.user) {
+  const user: User & { _id?: string } = session?.user as unknown as User & { _id?: string };
+  if (!session || !session.user || !user._id) {
     return Response.json(
       {
         success: false,
-        message: "no user in session",
+        message: "no user in session or missing user id",
       },
       { status: 401 }
     );
@@ -35,10 +35,10 @@ export async function POST(request: Request) {
       return Response.json(
         {
           success: false,
-          message: "no user in session",
+          message: "user not found or could not be updated",
         },
         {
-          status: 401,
+          status: 404,
         }
       );
     }
@@ -68,11 +68,11 @@ export async function POST(request: Request) {
 export async function GET() {
     await DbConnect();
     const session  = await getServerSession(authOptions);
-    const user : User= session?.user as unknown as User;
-    if(!session || !session.user){
+    const user : User & { _id?: string } = session?.user as unknown as User & { _id?: string };
+    if(!session || !session.user || !user._id){
         return Response.json({
             success : false,
-            message : "no user in session"
+            message : "no user in session or missing user id"
         },
     {
         status : 401,
