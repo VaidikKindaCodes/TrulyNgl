@@ -174,7 +174,7 @@ export const authOptions: NextAuthOptions = {
           });
         }
 
-        token.id = dbUser._id.toString();
+        token._id = dbUser._id.toString();
         token.isVerified = dbUser.isVerified;
         token.username = dbUser.username;
         token.isAcceptingMessages = dbUser.isAcceptingMessages;
