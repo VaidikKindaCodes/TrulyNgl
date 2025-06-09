@@ -9,9 +9,7 @@ type requestBody ={
 export async function POST(request:Request) {
     await DbConnect();
     const {username , content} = await request.json() as requestBody;
-
-    // Get sender's username from authentication (if available)
-    // For this example, let's assume the sender's username is in a header called "x-username"
+    
     const senderUsername = request.headers.get("x-username");
 
     try {
@@ -29,7 +27,6 @@ export async function POST(request:Request) {
             },{status: 403});
         }
 
-        // Prevent user from sending message to himself
         if(senderUsername && senderUsername === username){
             return Response.json({
                 success: false,

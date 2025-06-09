@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -54,8 +54,10 @@ function SignUpPage() {
           `/api/check-username-unique?username=${watchedUsername}`
         );
         setUsernameMessage(result.data.message);
-      } catch {
-        setUsernameMessage("Error checking username.");
+      } catch (error) {
+        const errorAxios = error as AxiosError<ApiResponse>;
+        const errormessage = errorAxios.response?.data.message as string;
+        setUsernameMessage(errormessage);
       } finally {
         setIsCheckingUsername(false);
       }

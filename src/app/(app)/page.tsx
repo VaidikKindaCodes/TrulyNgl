@@ -35,11 +35,11 @@ function Page() {
           </div>
         </div>
       </BackgroundBeamsWithCollision>
-      <div className="px-2 sm:px-8 py-4 max-w-3xl mx-auto w-full">
+      <div className="px-2 sm:px-4 py-8 max-w-7xl mx-auto w-full">
         <InfiniteMovingCards
           items={messages}
           direction="right"
-          speed="normal"
+          speed="slow"
         />
       </div>
     </>
