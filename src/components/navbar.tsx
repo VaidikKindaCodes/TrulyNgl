@@ -21,7 +21,7 @@ export function NavbarComp() {
       <div className="flex items-center gap-2 ml-auto">
       {session ? (
       <>
-      <span className="inline mr-2 text-sm md:text-lg text-white truncate max-w-[100px] md:max-w-none">
+      <span className="hidden md:inline mr-2 text-sm md:text-lg text-white truncate max-w-[100px] md:max-w-none">
         Welcome {user?.username || user?.email}
       </span>
       <Link
